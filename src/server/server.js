@@ -1,35 +1,22 @@
 import typeDefs from "./typeDef.js"
 import resolvers from "./resolvers.js";
 import { ApolloServer } from "@apollo/server";
-import { expressMiddleware } from '@apollo/server/express4';
-import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
-import cors from 'cors';
-import bodyParser from 'body-parser';
-import express from "express";
-import http from 'http';
+import { startStandaloneServer } from '@apollo/server/standalone'
 
 
-const extractAccessToken = (req, res, next) => {
-    if (req?.body.operationName != "IntrospectionQuery")
-        req.newAccessToken = req?.headers?.authorization
-    next()
-}
-const app = express()
-const httpServer = http.createServer(app);
 const server = new ApolloServer({
-    typeDefs, resolvers,
-    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+    typeDefs, resolvers
 })
-await server.start();
-app.use("/", cors(),
-    bodyParser.json(), extractAccessToken, expressMiddleware(server, {
-        context: async ({ req }) => ({ accessToken: req.newAccessToken }),
-    }),)
-await new Promise((resolve) => httpServer.listen({ port: 4000 }, resolve));
+const { url } = await startStandaloneServer(server, {
+    context: async () => {
+        return {
 
-console.log(`🚀 Server ready at http://localhost:4000/ `);
-
-
+        }
+    }
+})
+console.log("-----");
+console.log(" Server is Running !");
+console.log("-----");
 
 
 
