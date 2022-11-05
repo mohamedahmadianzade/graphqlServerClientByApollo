@@ -6,9 +6,10 @@ import fetch from 'cross-fetch';
 class ApolloClientService {
     client = null;
     query = ''
+    graphqlServer='http://localhost:4000/graphql'
     createClient() {
         this.client = new ApolloClient({
-            link: new HttpLink({ uri: 'http://localhost:4000/graphql', fetch }),
+            link: new HttpLink({ uri:  this.graphqlServer, fetch }),
             cache: new InMemoryCache()
         })
     }
